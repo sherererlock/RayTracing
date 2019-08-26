@@ -115,17 +115,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Camera.h" />
-    <ClInclude Include="..\Color.h" />
-    <ClInclude Include="..\Device.h" />
-    <ClInclude Include="..\DrawBoard.h" />
-    <ClInclude Include="..\sphere.h" />
-    <ClInclude Include="..\Vector.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Color.h" />
+    <ClInclude Include="Device.h" />
+    <ClInclude Include="DrawBoard.h" />
+    <ClInclude Include="sphere.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Device.cpp" />
-    <ClCompile Include="..\DrawBoard.cpp" />
-    <ClCompile Include="..\raytracing.cpp" />
+    <ClCompile Include="Device.cpp" />
+    <ClCompile Include="DrawBoard.cpp" />
+    <ClCompile Include="raytracing.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

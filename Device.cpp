@@ -80,4 +80,5 @@ Color Device::TracRay(Vector3 v) const
 {
 	Vector3 raydir = ( v - camera.eye ).Normalize( );
 
+	return Color(255.0f, 0.0f, 0.0f, 1.0f);
 }

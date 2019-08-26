@@ -3,3 +3,13 @@
 .vs/RayTracing/v15/Browse.VC.db
 .vs/RayTracing/v15/Browse.VC.opendb
 *.ipch
+*.obj
+*.log
+*.pdb
+*.ilk
+*.exe
+*.tlog
+*.user
+*.user
+*.user
+*.idb
