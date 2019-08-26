@@ -115,9 +115,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Camera.h" />
     <ClInclude Include="..\Color.h" />
     <ClInclude Include="..\Device.h" />
     <ClInclude Include="..\DrawBoard.h" />
+    <ClInclude Include="..\sphere.h" />
     <ClInclude Include="..\Vector.h" />
   </ItemGroup>
   <ItemGroup>

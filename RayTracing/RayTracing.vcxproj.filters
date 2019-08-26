@@ -33,6 +33,12 @@
     <ClInclude Include="..\DrawBoard.h">
       <Filter>windows</Filter>
     </ClInclude>
+    <ClInclude Include="..\Camera.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sphere.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\raytracing.cpp">
