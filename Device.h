@@ -3,6 +3,7 @@
 #include"DrawBoard.h"
 #include "Vector.h"
 #include "Color.h"
+#include "Camera.h"
 
 #define _GET_ALPHA( c ) ( ( (c) & 0xFF000000 ) >> 24 )
 
@@ -31,6 +32,7 @@ private:
 	int mWidth;
 	int mHeight;
 
+	Camera camera;
 	DrawBoard* mDrawBoard;
 	int** mFrameBuffer;
 
@@ -45,4 +47,7 @@ public:
 	void Close();
 
 	void DrawPoint(const Vector3& point, const Color& color) const;
+	void DrawScene() const;
+	Vector3 CanvasToViewPort(float x, float y) const;
+	Color TracRay( Vector3 v ) const;
 };

@@ -13,6 +13,12 @@ void Device::Init(int w, int h)
 
 	for (int i = 0; i < h; i++)
 		mFrameBuffer[i] = fb + i * w;
+
+	camera.eye = Vector3(0.0f, 0.0f, 0.0f);
+	camera.look = Vector3(0.0f, 0.0f, 1.0f);
+	camera.up = Vector3(0.0f, 1.0f, 0.0f);
+	camera.distance = 1.0f;
+	camera.fov = 0.5f * PI;
 }
 
 void Device::ClearBuffer()
@@ -49,4 +55,29 @@ void Device::DrawPoint(const Vector3& point, const Color& color) const
 		return;
 
 	mFrameBuffer[y][x] = r << 16 | g << 8 | b;
+}
+
+void Device::DrawScene() const
+{
+	for (int cy = -mHeight/2; cy < mHeight / 2; cy++)
+	{
+		for (int cx = -mWidth / 2; cx < mWidth / 2; cx++)
+		{
+			Vector3 v = CanvasToViewPort(cx, cy);
+
+		}
+	}
+}
+
+Vector3 Device::CanvasToViewPort(float x, float y) const
+{
+	float vw = 1;
+	float vh = 1;
+	return Vector3(x * vw / mWidth, y * vh / mHeight, camera.distance);
+}
+
+Color Device::TracRay(Vector3 v) const
+{
+	Vector3 raydir = ( v - camera.eye ).Normalize( );
+
 }

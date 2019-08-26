@@ -2,3 +2,4 @@
 .vs/RayTracing/v15/.suo
 .vs/RayTracing/v15/Browse.VC.db
 .vs/RayTracing/v15/Browse.VC.opendb
+*.ipch
