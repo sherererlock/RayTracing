@@ -19,6 +19,7 @@ void Device::Init(int w, int h)
 	camera.up = Vector3(0.0f, 1.0f, 0.0f);
 	camera.distance = 1.0f;
 	camera.fov = 0.5f * PI;
+
 }
 
 void Device::ClearBuffer()
@@ -59,12 +60,15 @@ void Device::DrawPoint(const Vector3& point, const Color& color) const
 
 void Device::DrawScene() const
 {
-	for (int cy = -mHeight/2; cy < mHeight / 2; cy++)
+	int hw = mWidth / 2;
+	int hh = mHeight / 2;
+	for (int cy = -hh; cy < hh; cy++)
 	{
-		for (int cx = -mWidth / 2; cx < mWidth / 2; cx++)
+		for (int cx = -hw; cx < hw; cx++)
 		{
 			Vector3 v = CanvasToViewPort(cx, cy);
-
+			Color color = TracRay(v);
+			DrawPoint(Vector3(cx + hw, cy + hh, 1.0f), color);
 		}
 	}
 }
@@ -79,6 +83,28 @@ Vector3 Device::CanvasToViewPort(float x, float y) const
 Color Device::TracRay(Vector3 v) const
 {
 	Vector3 raydir = ( v - camera.eye ).Normalize( );
+	Sphere sphere;
+	float closestt = 0.0f;
+	for (int i = 0; i < spheres.size(); i++)
+	{
+		Vector2 t = Intersect(raydir, spheres.at(i));
+		if (t.x > 1.0f && t.x < closestt)
+		{
+			sphere = spheres.at(i);
+			closestt = t.x;
+		}
 
-	return Color(255.0f, 0.0f, 0.0f, 1.0f);
+		if (t.y > 1.0f && t.y < closestt)
+		{
+			sphere = spheres.at(i);
+			closestt = t.y;
+		}
+	}
+
+	return sphere.color;
+}
+
+Vector2 Device::Intersect(Vector3 dir, Sphere sphere) const
+{
+	return Vector2(0.0f, 0.0f);
 }

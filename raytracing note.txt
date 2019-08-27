@@ -14,3 +14,32 @@ distance(P,C) = r
 |P-C| = r
 <P-C, P-C> = r^2
 
+光线与圆相交
+
+P=O+t(V−O)
+<P-C, P-C> = r^2
+
+令V-O = D
+
+P = O + tD
+<P-C, P-C> = r^2
+
+<O + tD-C, O + tD-C> = r^2
+令OC= O-C
+<OC+tD, OC+tD>=r^2
+
+<OC+tD,OC>+<OC+tD,tD>=r^2
+
+<OC,OC>+<tD,OC>+<OC,tD>+<tD,tD>=r^2
+
+<tD,tD>+2<OC,tD>+<OC,OC>=r^2
+t^2<D,D>t2<OC,D>+<OC,OC>-r^2=0
+
+D=O-V
+k1=<D ,D>
+
+k2=2<OC,D>
+
+k3=<OC,OC>−r^2
+
+k1t^2+k2t+k3=0

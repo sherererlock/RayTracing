@@ -21,34 +21,34 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Color.h">
-      <Filter>graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vector.h">
+    <ClInclude Include="Camera.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="..\Device.h">
-      <Filter>windows</Filter>
+    <ClInclude Include="Color.h">
+      <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="..\DrawBoard.h">
-      <Filter>windows</Filter>
+    <ClInclude Include="Device.h">
+      <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="..\Camera.h">
-      <Filter>graphics</Filter>
+    <ClInclude Include="DrawBoard.h">
+      <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="..\sphere.h">
-      <Filter>graphics</Filter>
+    <ClInclude Include="sphere.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\raytracing.cpp">
+    <ClCompile Include="Device.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawBoard.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="raytracing.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Device.cpp">
-      <Filter>windows</Filter>
-    </ClCompile>
-    <ClCompile Include="..\DrawBoard.cpp">
-      <Filter>windows</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

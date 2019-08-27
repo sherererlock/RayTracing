@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "Color.h"
 #include "Camera.h"
+#include "Sphere.h"
 
 #define _GET_ALPHA( c ) ( ( (c) & 0xFF000000 ) >> 24 )
 
@@ -36,6 +37,8 @@ private:
 	DrawBoard* mDrawBoard;
 	int** mFrameBuffer;
 
+	std::vector<Sphere> spheres;
+
 public:
 	Device() : mWidth(800), mHeight(600), mDrawBoard(NULL), mFrameBuffer(NULL) { }
 	Device(int width, int height) :mWidth(width), mHeight(height), mDrawBoard(NULL), mFrameBuffer(NULL) { }
@@ -50,4 +53,5 @@ public:
 	void DrawScene() const;
 	Vector3 CanvasToViewPort(float x, float y) const;
 	Color TracRay( Vector3 v ) const;
+	Vector2 Intersect(Vector3 dir, Sphere sphere) const;
 };

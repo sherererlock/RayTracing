@@ -58,7 +58,9 @@ int main()
 
 		device->ClearBuffer();
 
-		DrawLine( y );
+		//DrawLine( y );
+
+		device->DrawScene();
 
 		y++;
 		device->GetDrawBoard()->Update();
