@@ -18,8 +18,13 @@ void Device::Init(int w, int h)
 	camera.look = Vector3(0.0f, 0.0f, 1.0f);
 	camera.up = Vector3(0.0f, 1.0f, 0.0f);
 	camera.distance = 1.0f;
-	camera.fov = 0.5f * PI;
+	camera.fov = 53 / 180 * PI;
+	vieww = 1.0f / mWidth;
+	viewh = 1.0f / mHeight;
 
+	spheres.push_back(Sphere(Vector3(0.0f, -1.0f, 3.0f), 1.0f, Color(255.0f, 0.0f, 0.0f)));
+	spheres.push_back(Sphere(Vector3(2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 0.0f, 255.0f)));
+	spheres.push_back(Sphere(Vector3(-2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 255.0f, 0.0f)));
 }
 
 void Device::ClearBuffer()
@@ -45,7 +50,7 @@ void Device::Close()
 	delete mDrawBoard;
 }
 
-void Device::DrawPoint(const Vector3& point, const Color& color) const
+void Device::DrawPoint(const Vector2& point, const Color& color) const
 {
 	int x = Round(point.x);
 	int y = Round(point.y);
@@ -68,26 +73,24 @@ void Device::DrawScene() const
 		{
 			Vector3 v = CanvasToViewPort(cx, cy);
 			Color color = TracRay(v);
-			DrawPoint(Vector3(cx + hw, cy + hh, 1.0f), color);
+			DrawPoint(Vector2(cx + hw, cy + hh), color);
 		}
 	}
 }
 
 Vector3 Device::CanvasToViewPort(float x, float y) const
 {
-	float vw = 1;
-	float vh = 1;
-	return Vector3(x * vw / mWidth, y * vh / mHeight, camera.distance);
+	return Vector3(x * vieww, y * viewh, camera.distance);
 }
 
 Color Device::TracRay(Vector3 v) const
 {
-	Vector3 raydir = ( v - camera.eye ).Normalize( );
+	Vector3 raydir = v - camera.eye;
 	Sphere sphere;
-	float closestt = 0.0f;
+	float closestt = INFINITE;
 	for (int i = 0; i < spheres.size(); i++)
 	{
-		Vector2 t = Intersect(raydir, spheres.at(i));
+		Vector2 t = Intersect(v, spheres.at(i));
 		if (t.x > 1.0f && t.x < closestt)
 		{
 			sphere = spheres.at(i);
@@ -106,5 +109,19 @@ Color Device::TracRay(Vector3 v) const
 
 Vector2 Device::Intersect(Vector3 dir, Sphere sphere) const
 {
-	return Vector2(0.0f, 0.0f);
+	Vector3 oc = camera.eye - sphere.center;
+
+	float k1 = Vector3::Dot(dir, dir);
+	float k2 = 2 * Vector3::Dot(oc, dir);
+	float k3 = Vector3::Dot(oc, oc) - sphere.radius * sphere.radius;
+
+	float D = k2 * k2 - 4 * k1* k3;
+	if (D < 0)
+		return Vector2(INFINITE, INFINITE);
+
+	Vector2 s(0.0f, 0.0f);
+	s.x = (-k2 + ::sqrt(D)) / (2 * k1);
+	s.y = (-k2 - ::sqrt(D)) / (2 * k1);
+
+	return s;
 }

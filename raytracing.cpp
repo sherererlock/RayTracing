@@ -7,13 +7,13 @@ Device* device = NULL;
 void DrawLine(int y)
 {
 	for (int x = 0; x < 600; x++)
-		device->DrawPoint(Vector3(x, y, 0.0f), Color(255.0f, 0.0f, 0.0f, 1.0f));
+		device->DrawPoint(Vector2(x, y), Color(255.0f, 0.0f, 0.0f));
 }
 
 int main()
 {
 	device = new Device();
-	device->Init(800, 600);
+	device->Init(800, 800);
 	int y = 0;
 	while (true)
 	{

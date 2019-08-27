@@ -4,28 +4,28 @@
 class Color
 {
 public:
-	float r, g, b, a;
+	float r, g, b;
 
 	Color( ) { }
-	Color(float r, float g, float b, float a ) : r(r), g(g), b(b), a(a) { }
+	Color(float r, float g, float b) : r(r), g(g), b(b) { }
 
 	Color operator* (const Color& color) const
 	{
-		return Color(r * color.r, g * color.g, b * color.b, a * color.a);
+		return Color(r * color.r, g * color.g, b * color.b);
 	}
 
 	Color operator* (float factor) const
 	{
-		return Color(r * factor, g * factor, b * factor, a * factor);
+		return Color(r * factor, g * factor, b * factor);
 	}
 
 	Color operator+ (const Color& color) const
 	{
-		return Color(r + color.r, g + color.g, b + color.b, a + color.a);
+		return Color(r + color.r, g + color.g, b + color.b);
 	}
 
 	Color operator* (const Vector3& intesity) const
 	{
-		return Color(r * intesity.x, g * intesity.y, b * intesity.z, a);
+		return Color(r * intesity.x, g * intesity.y, b * intesity.z);
 	}
 };

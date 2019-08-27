@@ -5,11 +5,11 @@
 class Sphere
 {
 public:
-	Vector3 origin;
+	Vector3 center;
 	float	radius;
 	Color	color;
 
 public:
-	Sphere() :origin(Vector3(0.0f, 0.0f, 0.0f)), radius(0.0f), color(Color(255.0f, 255.0f, 255.0f, 1.0f))
-	{}
+	Sphere() :center(Vector3(0.0f, 0.0f, 0.0f)), radius(0.0f), color(Color(255.0f, 255.0f, 255.0f)) { }
+	Sphere(Vector3 center, float r, Color color) :center(center), radius(r), color(color){ }
 };

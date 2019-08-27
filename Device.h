@@ -37,6 +37,9 @@ private:
 	DrawBoard* mDrawBoard;
 	int** mFrameBuffer;
 
+	float vieww;
+	float viewh;
+
 	std::vector<Sphere> spheres;
 
 public:
@@ -49,7 +52,7 @@ public:
 	void ClearBuffer();
 	void Close();
 
-	void DrawPoint(const Vector3& point, const Color& color) const;
+	void DrawPoint(const Vector2& point, const Color& color) const;
 	void DrawScene() const;
 	Vector3 CanvasToViewPort(float x, float y) const;
 	Color TracRay( Vector3 v ) const;
