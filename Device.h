@@ -76,8 +76,9 @@ public:
 	void DrawPoint(const Vector2& point, const Color& color) const;
 	void DrawScene() const;
 	Vector3 CanvasToViewPort(float x, float y) const;
-	Color TracRay( Vector3 v ) const;
-	Vector2 Intersect(Vector3 dir, Sphere sphere) const;
+	Color TracRay(const Vector3& origin, const Vector3& v ) const;
+	Vector2 Intersect(const Vector3& origin, const Vector3& dir, const Sphere& sphere) const;
+	float CloestIntersectiont(const Vector3& dir, const Sphere& sphere, Sphere* cloestsphere);
 
-	float ComputeLight(Vector3 point, Vector3 normal, Vector3 view, float s) const;
+	float ComputeLight(const Vector3& point, const Vector3& normal, const Vector3& view, float s) const;
 };

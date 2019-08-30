@@ -86,7 +86,7 @@ void Device::DrawScene() const
 		for (int cx = -hw; cx < hw; cx++)
 		{
 			Vector3 v = CanvasToViewPort(cx, cy);
-			Color color = TracRay(v);
+			Color color = TracRay(camera.eye, v);
 			DrawPoint(Vector2(cx + hw, cy + hh), color);
 		}
 	}
@@ -97,39 +97,43 @@ Vector3 Device::CanvasToViewPort(float x, float y) const
 	return Vector3(x * vieww, y * viewh, camera.distance);
 }
 
-Color Device::TracRay(Vector3 v) const
+Color Device::TracRay(const Vector3& origin, const Vector3& v) const
 {
-	Vector3 raydir = v - camera.eye;
-	Sphere sphere;
+	Vector3 raydir = v - origin;
+	const Sphere* sphere = nullptr;
 	float closestt = INFINITE;
 	for (int i = 0; i < spheres.size(); i++)
 	{
-		Vector2 t = Intersect(v, spheres.at(i));
+		Vector2 t = Intersect(origin, v, spheres.at(i));
 		if (t.x > 1.0f && t.x < closestt)
 		{
-			sphere = spheres.at(i);
+			sphere = &spheres.at(i);
 			closestt = t.x;
 		}
 
 		if (t.y > 1.0f && t.y < closestt)
 		{
-			sphere = spheres.at(i);
+			sphere = &spheres.at(i);
 			closestt = t.y;
 		}
 	}
 
-	Vector3 point = camera.eye + v * closestt;
-	Vector3 normal = ( point - sphere.center ).Normalize( );
+	if (sphere == nullptr)
+		return Color(255.0f, 255.0f, 255.0f);
+
+	Vector3 point = origin + v * closestt;
+
+	Vector3 normal = ( point - sphere->center ).Normalize( );
 	float intensity = 1.0f;
 	if (IsDiffuseEnabled())
-		intensity = ComputeLight(point, normal, v*-1, sphere.specular);
+		intensity = ComputeLight(point, normal, v*-1, sphere->specular);
 
-	return sphere.color * intensity;
+	return sphere->color * intensity;
 }
 
-Vector2 Device::Intersect(Vector3 dir, Sphere sphere) const
+Vector2 Device::Intersect(const Vector3& origin, const Vector3& dir, const Sphere& sphere) const
 {
-	Vector3 oc = camera.eye - sphere.center;
+	Vector3 oc = origin - sphere.center;
 
 	float k1 = Vector3::Dot(dir, dir);
 	float k2 = 2 * Vector3::Dot(oc, dir);
@@ -146,7 +150,12 @@ Vector2 Device::Intersect(Vector3 dir, Sphere sphere) const
 	return s;
 }
 
-float Device::ComputeLight(Vector3 point, Vector3 normal, Vector3 view, float s) const
+float CloestIntersectiont(const Vector3& dir, const Sphere& sphere, Sphere* cloestsphere)
+{
+	return 0.0f;
+}
+
+float Device::ComputeLight(const Vector3& point, const Vector3& normal, const Vector3& view, float s) const
 {
 	float intensity = 0.0f;
 	for (int i = 0; i < lights.size(); i++)
