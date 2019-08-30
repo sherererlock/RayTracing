@@ -119,6 +119,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="DrawBoard.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="sphere.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>

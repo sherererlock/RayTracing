@@ -5,6 +5,7 @@
 #include "Color.h"
 #include "Camera.h"
 #include "Sphere.h"
+#include "Light.h"
 
 #define _GET_ALPHA( c ) ( ( (c) & 0xFF000000 ) >> 24 )
 
@@ -29,6 +30,13 @@
 
 class Device
 {
+public:
+	enum mode
+	{
+		_Lighting_Diffuse	= 0x00000001,
+		_Lighting_Specular	= 0x00000002,
+	};
+
 private:
 	int mWidth;
 	int mHeight;
@@ -40,6 +48,9 @@ private:
 	float vieww;
 	float viewh;
 
+	int mDrawMode;
+
+	std::vector<Light> lights;
 	std::vector<Sphere> spheres;
 
 public:
@@ -47,6 +58,16 @@ public:
 	Device(int width, int height) :mWidth(width), mHeight(height), mDrawBoard(NULL), mFrameBuffer(NULL) { }
 	~Device() { }
 	inline DrawBoard* GetDrawBoard() { return mDrawBoard; }
+
+	inline bool IsDiffuseEnabled() const
+		{ return (mDrawMode & _Lighting_Diffuse) != 0; }
+	inline void EnableDiffuse(bool enable)
+		{ mDrawMode = enable ? (mDrawMode | _Lighting_Diffuse) : (mDrawMode & ~_Lighting_Diffuse); }
+
+	inline bool IsSpecularEnabled() const
+		{ return (mDrawMode & _Lighting_Specular) != 0; }
+	inline void EnableSpecular(bool enable)
+		{ mDrawMode = enable ? (mDrawMode | _Lighting_Specular) : (mDrawMode & ~_Lighting_Specular); }
 
 	void Init(int w, int h);
 	void ClearBuffer();
@@ -57,4 +78,6 @@ public:
 	Vector3 CanvasToViewPort(float x, float y) const;
 	Color TracRay( Vector3 v ) const;
 	Vector2 Intersect(Vector3 dir, Sphere sphere) const;
+
+	float ComputeLight(Vector3 point, Vector3 normal) const;
 };

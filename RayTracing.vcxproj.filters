@@ -39,6 +39,9 @@
     <ClInclude Include="Vector.h">
       <Filter>math</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">

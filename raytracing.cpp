@@ -14,31 +14,27 @@ int main()
 {
 	device = new Device();
 	device->Init(800, 800);
-	int y = 0;
 	while (true)
 	{
 		if (device->GetDrawBoard( )->IsKeyDown(VK_ESCAPE))
 			break;
 
-		if ( device->GetDrawBoard()->IsKeyDown(87))
+		if ( device->GetDrawBoard()->IsKeyDown(VK_UP))
 		{
-
+			device->EnableDiffuse(true);
 		}
-		else if (device->GetDrawBoard()->IsKeyDown(83))
+		else if (device->GetDrawBoard()->IsKeyDown(VK_DOWN))
 		{
-
+			device->EnableDiffuse(false);
 		}
 		else if (device->GetDrawBoard()->IsKeyDown(65))
 		{
-
 		}
 		else if ( device->GetDrawBoard()->IsKeyDown(68))
 		{
-
 		}
 		else if (device->GetDrawBoard()->IsKeyDown(VK_RIGHT))
 		{
-
 		}
 		else if (device->GetDrawBoard()->IsKeyDown(VK_LEFT))
 		{
@@ -53,16 +49,8 @@ int main()
 	
 		}
 
-		if (y > 600)
-			y = 0;
-
 		device->ClearBuffer();
-
-		//DrawLine( y );
-
 		device->DrawScene();
-
-		y++;
 		device->GetDrawBoard()->Update();
 	}
 

@@ -1,15 +1,10 @@
 #pragma once
 #include "Color.h"
 #include "Vector.h"
-#include "Vertex.h"
 
 class Light
 {
 public:
-	Vector4		mPos;
-	Vector3		mIntensity;
-	int			mType;
-
 	enum
 	{
 		_Light_Point,
@@ -17,8 +12,9 @@ public:
 		_Light_Ambient
 	};
 
-public:
-	static Vector3 CalcDiffuse(const Light& light, const Vertex& vertex);
-	static Vector3 CalcSpecular(const Vector4 campos, const Light& light, const Vertex& vertex, float sharpness = 1.0f);
-	static Vector3 CalcAmbient( );
+	Vector3		mVector;
+	float		mIntensity;
+	int			mType;
+
+	Light(Vector3 vec, float i, int type) :mVector(vec), mIntensity(i), mType(type) {}
 };

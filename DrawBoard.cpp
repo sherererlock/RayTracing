@@ -10,9 +10,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	//处理消息
 	switch (msg)
 	{
-		case WM_CLOSE: KeysDown[27 & 511] = 1; break;
-		case WM_KEYDOWN:KeysDown[wparam & 511] = 1; break;
-		case WM_KEYUP:KeysDown[wparam & 511] = 0; break;
+		case WM_CLOSE:
+			KeysDown[27 & 511] = 1;
+			break;
+		case WM_KEYDOWN:
+			KeysDown[wparam & 511] = 1;
+			break;
+		case WM_KEYUP:
+			KeysDown[wparam & 511] = 0;
+			break;
 		default:return DefWindowProc(hwnd, msg, wparam, lparam);
 	}
 

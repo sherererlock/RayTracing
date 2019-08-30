@@ -11,6 +11,8 @@ void Device::Init(int w, int h)
 	int* fb = (int*)mDrawBoard->GetFramebuffer();
 	mFrameBuffer = (int**)malloc(h * sizeof(int*));
 
+	mDrawMode = 0;
+
 	for (int i = 0; i < h; i++)
 		mFrameBuffer[i] = fb + i * w;
 
@@ -22,9 +24,14 @@ void Device::Init(int w, int h)
 	vieww = 1.0f / mWidth;
 	viewh = 1.0f / mHeight;
 
+	lights.push_back(Light(Vector3(0.0f, 0.0f, 0.0f), 0.2f, Light::_Light_Ambient));
+	lights.push_back(Light(Vector3(2.0f, 1.0f, 0.0f), 0.6f, Light::_Light_Point));
+	lights.push_back(Light(Vector3(1.0f, 4.0f, 4.0f), 0.2f, Light::_Light_Directional));
+
 	spheres.push_back(Sphere(Vector3(0.0f, -1.0f, 3.0f), 1.0f, Color(255.0f, 0.0f, 0.0f)));
 	spheres.push_back(Sphere(Vector3(2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 0.0f, 255.0f)));
 	spheres.push_back(Sphere(Vector3(-2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 255.0f, 0.0f)));
+	spheres.push_back(Sphere(Vector3(0.0f, -5001.0f, 0.0f), 5000.0f, Color(255.0f, 255.0f, 0.0f)));
 }
 
 void Device::ClearBuffer()
@@ -104,7 +111,13 @@ Color Device::TracRay(Vector3 v) const
 		}
 	}
 
-	return sphere.color;
+	Vector3 point = camera.eye + v * closestt;
+	Vector3 normal = ( point - sphere.center ).Normalize( );
+	float intensity = 1.0f;
+	if (IsDiffuseEnabled())
+		intensity = ComputeLight(point, normal);
+
+	return sphere.color * intensity;
 }
 
 Vector2 Device::Intersect(Vector3 dir, Sphere sphere) const
@@ -124,4 +137,30 @@ Vector2 Device::Intersect(Vector3 dir, Sphere sphere) const
 	s.y = (-k2 - ::sqrt(D)) / (2 * k1);
 
 	return s;
+}
+
+float Device::ComputeLight(Vector3 point, Vector3 normal) const
+{
+	float intensity = 0.0f;
+	for (int i = 0; i < lights.size(); i++)
+	{
+		const Light& light = lights[i];
+		Vector3 lightdir;
+		if (light.mType == Light::_Light_Ambient)
+		{
+			intensity += light.mIntensity;
+			continue;
+		}
+		else if (light.mType == Light::_Light_Directional)
+			lightdir = light.mVector;
+		else if (light.mType == Light::_Light_Point)
+			lightdir = (light.mVector - point).Normalize();
+
+		float ndotl = Vector3::Dot(normal, lightdir);
+		float length = (normal.Length() * lightdir.Length());
+		if (ndotl > 0)
+			intensity += light.mIntensity * ndotl / length;
+	}
+
+	return intensity;
 }
