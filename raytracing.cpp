@@ -27,11 +27,14 @@ int main()
 		{
 			device->EnableDiffuse(false);
 		}
-		else if (device->GetDrawBoard()->IsKeyDown(65))
+		else if (device->GetDrawBoard()->IsKeyDown(VK_RIGHT))
 		{
+			device->EnableDiffuse(true);
+			device->EnableSpecular(true);
 		}
-		else if ( device->GetDrawBoard()->IsKeyDown(68))
+		else if ( device->GetDrawBoard()->IsKeyDown(VK_LEFT))
 		{
+			device->EnableSpecular(false);
 		}
 		else if (device->GetDrawBoard()->IsKeyDown(VK_RIGHT))
 		{

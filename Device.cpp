@@ -28,10 +28,13 @@ void Device::Init(int w, int h)
 	lights.push_back(Light(Vector3(2.0f, 1.0f, 0.0f), 0.6f, Light::_Light_Point));
 	lights.push_back(Light(Vector3(1.0f, 4.0f, 4.0f), 0.2f, Light::_Light_Directional));
 
-	spheres.push_back(Sphere(Vector3(0.0f, -1.0f, 3.0f), 1.0f, Color(255.0f, 0.0f, 0.0f)));
-	spheres.push_back(Sphere(Vector3(2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 0.0f, 255.0f)));
-	spheres.push_back(Sphere(Vector3(-2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 255.0f, 0.0f)));
-	spheres.push_back(Sphere(Vector3(0.0f, -5001.0f, 0.0f), 5000.0f, Color(255.0f, 255.0f, 0.0f)));
+	spheres.push_back(Sphere(Vector3(0.0f, -1.0f, 3.0f), 1.0f, Color(255.0f, 0.0f, 0.0f), 500));
+	spheres.push_back(Sphere(Vector3(2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 0.0f, 255.0f), 500));
+	spheres.push_back(Sphere(Vector3(-2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 255.0f, 0.0f), 10));
+	spheres.push_back(Sphere(Vector3(0.0f, -5001.0f, 0.0f), 5000.0f, Color(255.0f, 255.0f, 0.0f), 1000));
+
+	EnableDiffuse(true);
+	EnableSpecular(true);
 }
 
 void Device::ClearBuffer()
@@ -66,6 +69,10 @@ void Device::DrawPoint(const Vector2& point, const Color& color) const
 	int b = Round(color.b);
 	if (x >= mWidth || x < 0 || y < 0 || y >= mHeight)
 		return;
+
+	r = r > 255 ? 255 : r;
+	g = g > 255 ? 255 : g;
+	b = b > 255 ? 255 : b;
 
 	mFrameBuffer[y][x] = r << 16 | g << 8 | b;
 }
@@ -115,7 +122,7 @@ Color Device::TracRay(Vector3 v) const
 	Vector3 normal = ( point - sphere.center ).Normalize( );
 	float intensity = 1.0f;
 	if (IsDiffuseEnabled())
-		intensity = ComputeLight(point, normal);
+		intensity = ComputeLight(point, normal, v*-1, sphere.specular);
 
 	return sphere.color * intensity;
 }
@@ -139,7 +146,7 @@ Vector2 Device::Intersect(Vector3 dir, Sphere sphere) const
 	return s;
 }
 
-float Device::ComputeLight(Vector3 point, Vector3 normal) const
+float Device::ComputeLight(Vector3 point, Vector3 normal, Vector3 view, float s) const
 {
 	float intensity = 0.0f;
 	for (int i = 0; i < lights.size(); i++)
@@ -157,9 +164,16 @@ float Device::ComputeLight(Vector3 point, Vector3 normal) const
 			lightdir = (light.mVector - point).Normalize();
 
 		float ndotl = Vector3::Dot(normal, lightdir);
-		float length = (normal.Length() * lightdir.Length());
 		if (ndotl > 0)
-			intensity += light.mIntensity * ndotl / length;
+			intensity += light.mIntensity * ndotl / (normal.Length() * lightdir.Length());
+
+		if (IsSpecularEnabled() == false || s == - 1)
+			continue;
+
+		Vector3 r = normal* 2 * Vector3::Dot(normal, lightdir) - lightdir;
+		float rdotv = Vector3::Dot(r, view);
+		if (rdotv > 0.0f)
+			intensity += light.mIntensity * ::pow(rdotv /( r.Length()*view.Length()), s);
 	}
 
 	return intensity;

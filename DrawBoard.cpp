@@ -47,7 +47,7 @@ void DrawBoard::Init(int w, int h)
 
 	mHWnd = CreateWindow(szAppName,    //窗口类名
 		TEXT("SoftRendering"),    //窗口标题，会在窗口的左上角标题栏显示
-		WS_OVERLAPPEDWINDOW | WS_VSCROLL | WS_HSCROLL, //窗口风格
+		WS_OVERLAPPEDWINDOW, //窗口风格
 		0,  //窗口左上角x位置，这里使用的系统默认值，可自定义
 		0,  //窗口左上角y位置
 		mWidth,  //窗口的宽度

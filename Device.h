@@ -79,5 +79,5 @@ public:
 	Color TracRay( Vector3 v ) const;
 	Vector2 Intersect(Vector3 dir, Sphere sphere) const;
 
-	float ComputeLight(Vector3 point, Vector3 normal) const;
+	float ComputeLight(Vector3 point, Vector3 normal, Vector3 view, float s) const;
 };
