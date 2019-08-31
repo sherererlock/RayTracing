@@ -13,7 +13,7 @@ void DrawLine(int y)
 int main()
 {
 	device = new Device();
-	device->Init(800, 800);
+	device->Init(400, 400);
 	while (true)
 	{
 		if (device->GetDrawBoard( )->IsKeyDown(VK_ESCAPE))

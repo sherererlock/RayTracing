@@ -35,6 +35,7 @@ void Device::Init(int w, int h)
 
 	EnableDiffuse(true);
 	EnableSpecular(true);
+	EnableShadow(true);
 }
 
 void Device::ClearBuffer()
@@ -100,33 +101,17 @@ Vector3 Device::CanvasToViewPort(float x, float y) const
 Color Device::TracRay(const Vector3& origin, const Vector3& v) const
 {
 	Vector3 raydir = v - origin;
-	const Sphere* sphere = nullptr;
 	float closestt = INFINITE;
-	for (int i = 0; i < spheres.size(); i++)
-	{
-		Vector2 t = Intersect(origin, v, spheres.at(i));
-		if (t.x > 1.0f && t.x < closestt)
-		{
-			sphere = &spheres.at(i);
-			closestt = t.x;
-		}
-
-		if (t.y > 1.0f && t.y < closestt)
-		{
-			sphere = &spheres.at(i);
-			closestt = t.y;
-		}
-	}
+	const Sphere* sphere = CloestIntersection( origin, raydir, 1.0f, INFINITE, closestt);
 
 	if (sphere == nullptr)
 		return Color(255.0f, 255.0f, 255.0f);
 
-	Vector3 point = origin + v * closestt;
-
-	Vector3 normal = ( point - sphere->center ).Normalize( );
+	Vector3 point = origin + raydir * closestt;
+	Vector3 normal = point - sphere->center;
 	float intensity = 1.0f;
 	if (IsDiffuseEnabled())
-		intensity = ComputeLight(point, normal, v*-1, sphere->specular);
+		intensity = ComputeLight(point, normal, raydir*-1, sphere->specular);
 
 	return sphere->color * intensity;
 }
@@ -150,9 +135,67 @@ Vector2 Device::Intersect(const Vector3& origin, const Vector3& dir, const Spher
 	return s;
 }
 
-float CloestIntersectiont(const Vector3& dir, const Sphere& sphere, Sphere* cloestsphere)
+Vector2 Device::Intersect1(const Vector3& origin, const Vector3& dir, const Sphere& sphere) const
 {
-	return 0.0f;
+	Vector3 oc = origin - sphere.center;
+
+	float k1 = Vector3::Dot(dir, dir);
+	float k2 = 2 * Vector3::Dot(oc, dir);
+	float k3 = Vector3::Dot(oc, oc) - sphere.radius * sphere.radius;
+
+	float D = k2 * k2 - 4 * k1* k3;
+	if (D < 0)
+		return Vector2(INFINITE, INFINITE);
+
+	Vector2 s(0.0f, 0.0f);
+	s.x = (-k2 + ::sqrt(D)) / (2 * k1);
+	s.y = (-k2 - ::sqrt(D)) / (2 * k1);
+
+	return s;
+}
+
+const Sphere* Device::CloestIntersection(const Vector3& origin, const Vector3& dir, float tmin, float tmax, float& closestt) const
+{
+	const Sphere* cloestsphere = nullptr;
+	for (int i = 0; i < spheres.size(); i++)
+	{
+		Vector2 t = Intersect(origin, dir, spheres.at(i));
+		if (t.x > tmin && t.x < tmax && t.x < closestt)
+		{
+			cloestsphere = &spheres.at(i);
+			closestt = t.x;
+		}
+
+		if (t.y > tmin && t.y < tmax && t.y < closestt)
+		{
+			cloestsphere = &spheres.at(i);
+			closestt = t.y;
+		}
+	}
+
+	return cloestsphere;
+}
+
+const Sphere* Device::CloestIntersection1(const Vector3& origin, const Vector3& dir, float tmin, float tmax, float& closestt) const
+{
+	const Sphere* cloestsphere = nullptr;
+	for (int i = 0; i < spheres.size(); i++)
+	{
+		Vector2 t = Intersect1(origin, dir, spheres.at(i));
+		if (t.x > tmin && t.x < tmax && t.x < closestt)
+		{
+			cloestsphere = &spheres.at(i);
+			closestt = t.x;
+		}
+
+		if (t.y > tmin && t.y < tmax && t.y < closestt)
+		{
+			cloestsphere = &spheres.at(i);
+			closestt = t.y;
+		}
+	}
+
+	return cloestsphere;
 }
 
 float Device::ComputeLight(const Vector3& point, const Vector3& normal, const Vector3& view, float s) const
@@ -161,28 +204,44 @@ float Device::ComputeLight(const Vector3& point, const Vector3& normal, const Ve
 	for (int i = 0; i < lights.size(); i++)
 	{
 		const Light& light = lights[i];
-		Vector3 lightdir;
 		if (light.mType == Light::_Light_Ambient)
 		{
 			intensity += light.mIntensity;
 			continue;
 		}
-		else if (light.mType == Light::_Light_Directional)
-			lightdir = light.mVector;
-		else if (light.mType == Light::_Light_Point)
-			lightdir = (light.mVector - point).Normalize();
+		else
+		{
+			Vector3 lightdir;
+			float tmax = INFINITE;
 
-		float ndotl = Vector3::Dot(normal, lightdir);
-		if (ndotl > 0)
-			intensity += light.mIntensity * ndotl / (normal.Length() * lightdir.Length());
+			if (light.mType == Light::_Light_Directional)
+				lightdir = light.mVector;
+			else if (light.mType == Light::_Light_Point)
+			{
+				lightdir = light.mVector - point;
+				tmax = 1.0f;
+			}
 
-		if (IsSpecularEnabled() == false || s == - 1)
-			continue;
+			if (IsShadowEnabled())
+			{
+				float closest = INFINITE;
+				const Sphere* sphere = CloestIntersection1(point, lightdir, 0.0001f, tmax, closest);
+				if (sphere != nullptr)
+					continue;
+			}
 
-		Vector3 r = normal* 2 * Vector3::Dot(normal, lightdir) - lightdir;
-		float rdotv = Vector3::Dot(r, view);
-		if (rdotv > 0.0f)
-			intensity += light.mIntensity * ::pow(rdotv /( r.Length()*view.Length()), s);
+			float ndotl = Vector3::Dot(normal, lightdir);
+			if (ndotl > 0)
+				intensity += light.mIntensity * ndotl / (normal.Length() * lightdir.Length());
+
+			if (IsSpecularEnabled() == false || s == -1.0f)
+				continue;
+
+			Vector3 r = normal * 2 * Vector3::Dot(normal, lightdir) - lightdir;
+			float rdotv = Vector3::Dot(r, view);
+			if (rdotv > 0.0f)
+				intensity += light.mIntensity * ::pow(rdotv / (r.Length()*view.Length()), s);
+		}
 	}
 
 	return intensity;
