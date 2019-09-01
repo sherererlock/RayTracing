@@ -135,53 +135,12 @@ Vector2 Device::Intersect(const Vector3& origin, const Vector3& dir, const Spher
 	return s;
 }
 
-Vector2 Device::Intersect1(const Vector3& origin, const Vector3& dir, const Sphere& sphere) const
-{
-	Vector3 oc = origin - sphere.center;
-
-	float k1 = Vector3::Dot(dir, dir);
-	float k2 = 2 * Vector3::Dot(oc, dir);
-	float k3 = Vector3::Dot(oc, oc) - sphere.radius * sphere.radius;
-
-	float D = k2 * k2 - 4 * k1* k3;
-	if (D < 0)
-		return Vector2(INFINITE, INFINITE);
-
-	Vector2 s(0.0f, 0.0f);
-	s.x = (-k2 + ::sqrt(D)) / (2 * k1);
-	s.y = (-k2 - ::sqrt(D)) / (2 * k1);
-
-	return s;
-}
-
 const Sphere* Device::CloestIntersection(const Vector3& origin, const Vector3& dir, float tmin, float tmax, float& closestt) const
 {
 	const Sphere* cloestsphere = nullptr;
 	for (int i = 0; i < spheres.size(); i++)
 	{
 		Vector2 t = Intersect(origin, dir, spheres.at(i));
-		if (t.x > tmin && t.x < tmax && t.x < closestt)
-		{
-			cloestsphere = &spheres.at(i);
-			closestt = t.x;
-		}
-
-		if (t.y > tmin && t.y < tmax && t.y < closestt)
-		{
-			cloestsphere = &spheres.at(i);
-			closestt = t.y;
-		}
-	}
-
-	return cloestsphere;
-}
-
-const Sphere* Device::CloestIntersection1(const Vector3& origin, const Vector3& dir, float tmin, float tmax, float& closestt) const
-{
-	const Sphere* cloestsphere = nullptr;
-	for (int i = 0; i < spheres.size(); i++)
-	{
-		Vector2 t = Intersect1(origin, dir, spheres.at(i));
 		if (t.x > tmin && t.x < tmax && t.x < closestt)
 		{
 			cloestsphere = &spheres.at(i);
@@ -225,7 +184,7 @@ float Device::ComputeLight(const Vector3& point, const Vector3& normal, const Ve
 			if (IsShadowEnabled())
 			{
 				float closest = INFINITE;
-				const Sphere* sphere = CloestIntersection1(point, lightdir, 0.0001f, tmax, closest);
+				const Sphere* sphere = CloestIntersection(point, lightdir, 0.0001f, tmax, closest);
 				if (sphere != nullptr)
 					continue;
 			}

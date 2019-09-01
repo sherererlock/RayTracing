@@ -84,9 +84,7 @@ public:
 	Vector3 CanvasToViewPort(float x, float y) const;
 	Color TracRay(const Vector3& origin, const Vector3& v ) const;
 	Vector2 Intersect(const Vector3& origin, const Vector3& dir, const Sphere& sphere) const;
-	Vector2 Intersect1(const Vector3& origin, const Vector3& dir, const Sphere& sphere) const;
 	const Sphere* CloestIntersection(const Vector3& origin, const Vector3& dir, float tmin, float tmax, float& cloestt) const;
-	const Sphere* CloestIntersection1(const Vector3& origin, const Vector3& dir, float tmin, float tmax, float& cloestt) const;
 
 	float ComputeLight(const Vector3& point, const Vector3& normal, const Vector3& view, float s) const;
 };
