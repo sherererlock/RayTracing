@@ -13,7 +13,7 @@ void DrawLine(int y)
 int main()
 {
 	device = new Device();
-	device->Init(400, 400);
+	device->Init(800, 800);
 	while (true)
 	{
 		if (device->GetDrawBoard( )->IsKeyDown(VK_ESCAPE))
@@ -25,31 +25,15 @@ int main()
 		}
 		else if (device->GetDrawBoard()->IsKeyDown(VK_DOWN))
 		{
-			device->EnableDiffuse(false);
+			device->EnableSpecular(true);
 		}
 		else if (device->GetDrawBoard()->IsKeyDown(VK_RIGHT))
 		{
-			device->EnableDiffuse(true);
-			device->EnableSpecular(true);
+			device->EnableShadow(true);
 		}
 		else if ( device->GetDrawBoard()->IsKeyDown(VK_LEFT))
 		{
-			device->EnableSpecular(false);
-		}
-		else if (device->GetDrawBoard()->IsKeyDown(VK_RIGHT))
-		{
-		}
-		else if (device->GetDrawBoard()->IsKeyDown(VK_LEFT))
-		{
-
-		}
-		else if (device->GetDrawBoard()->IsKeyDown(VK_UP))
-		{
-
-		}
-		else if (device->GetDrawBoard()->IsKeyDown(VK_DOWN))
-		{
-	
+			device->EnableReflection(true);
 		}
 
 		device->ClearBuffer();

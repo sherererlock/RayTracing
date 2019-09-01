@@ -33,9 +33,10 @@ class Device
 public:
 	enum mode
 	{
-		_Lighting_Diffuse	= 0x00000001,
-		_Lighting_Specular	= 0x00000002,
-		_Lighting_Shadow	= 0x00000004,
+		_Lighting_Diffuse		= 0x00000001,
+		_Lighting_Specular		= 0x00000002,
+		_Lighting_Shadow		= 0x00000004,
+		_Lighting_Reflection	= 0x00000008,
 	};
 
 private:
@@ -51,6 +52,10 @@ private:
 
 	int mDrawMode;
 
+	int mDepth;
+
+	Color mBackGroundColor;
+
 	std::vector<Light> lights;
 	std::vector<Sphere> spheres;
 
@@ -65,15 +70,20 @@ public:
 	inline void EnableDiffuse(bool enable)
 		{ mDrawMode = enable ? (mDrawMode | _Lighting_Diffuse) : (mDrawMode & ~_Lighting_Diffuse); }
 
+	inline bool IsSpecularEnabled() const
+		{ return (mDrawMode & _Lighting_Specular) != 0; }
+	inline void EnableSpecular(bool enable)
+		{ mDrawMode = enable ? (mDrawMode | _Lighting_Specular) : (mDrawMode & ~_Lighting_Specular); }
+
 	inline bool IsShadowEnabled() const
 		{ return (mDrawMode & _Lighting_Shadow) != 0; }
 	inline void EnableShadow(bool enable)
 		{ mDrawMode = enable ? (mDrawMode | _Lighting_Shadow) : (mDrawMode & ~_Lighting_Shadow); }
 
-	inline bool IsSpecularEnabled() const
-		{ return (mDrawMode & _Lighting_Specular) != 0; }
-	inline void EnableSpecular(bool enable)
-		{ mDrawMode = enable ? (mDrawMode | _Lighting_Specular) : (mDrawMode & ~_Lighting_Specular); }
+	inline bool IsReflectionEnabled() const
+		{ return (mDrawMode & _Lighting_Reflection) != 0; }
+	inline void EnableReflection(bool enable)
+		{ mDrawMode = enable ? (mDrawMode | _Lighting_Reflection) : (mDrawMode & ~_Lighting_Reflection); }
 
 	void Init(int w, int h);
 	void ClearBuffer();
@@ -82,9 +92,10 @@ public:
 	void DrawPoint(const Vector2& point, const Color& color) const;
 	void DrawScene() const;
 	Vector3 CanvasToViewPort(float x, float y) const;
-	Color TracRay(const Vector3& origin, const Vector3& v ) const;
+	Color TracRay(const Vector3& origin, const Vector3& v, float tmin, float tmax, int depth ) const;
 	Vector2 Intersect(const Vector3& origin, const Vector3& dir, const Sphere& sphere) const;
 	const Sphere* CloestIntersection(const Vector3& origin, const Vector3& dir, float tmin, float tmax, float& cloestt) const;
+	Vector3 ReflectVector(const Vector3& incident, const Vector3& normal) const;
 
 	float ComputeLight(const Vector3& point, const Vector3& normal, const Vector3& view, float s) const;
 };

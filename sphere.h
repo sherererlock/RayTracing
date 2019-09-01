@@ -9,8 +9,9 @@ public:
 	float	radius;
 	Color	color;
 	float	specular;
+	float	reflection;
 
 public:
-	Sphere() :center(Vector3(0.0f, 0.0f, 0.0f)), radius(0.0f), color(Color(255.0f, 255.0f, 255.0f)), specular(-1){ }
-	Sphere(Vector3 center, float r, Color color, float s) :center(center), radius(r), color(color), specular(s){ }
+	Sphere() :center(Vector3(0.0f, 0.0f, 0.0f)), radius(0.0f), color(Color(255.0f, 255.0f, 255.0f)), specular(-1), reflection(0.0f){ }
+	Sphere(Vector3 center, float r, Color color, float s, float reflect) :center(center), radius(r), color(color), specular(s),reflection(reflect) { }
 };

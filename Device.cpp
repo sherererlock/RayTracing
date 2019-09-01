@@ -13,6 +13,8 @@ void Device::Init(int w, int h)
 
 	mDrawMode = 0;
 
+	mDepth = 3;
+
 	for (int i = 0; i < h; i++)
 		mFrameBuffer[i] = fb + i * w;
 
@@ -28,14 +30,15 @@ void Device::Init(int w, int h)
 	lights.push_back(Light(Vector3(2.0f, 1.0f, 0.0f), 0.6f, Light::_Light_Point));
 	lights.push_back(Light(Vector3(1.0f, 4.0f, 4.0f), 0.2f, Light::_Light_Directional));
 
-	spheres.push_back(Sphere(Vector3(0.0f, -1.0f, 3.0f), 1.0f, Color(255.0f, 0.0f, 0.0f), 500));
-	spheres.push_back(Sphere(Vector3(2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 0.0f, 255.0f), 500));
-	spheres.push_back(Sphere(Vector3(-2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 255.0f, 0.0f), 10));
-	spheres.push_back(Sphere(Vector3(0.0f, -5001.0f, 0.0f), 5000.0f, Color(255.0f, 255.0f, 0.0f), 1000));
+	spheres.push_back(Sphere(Vector3(0.0f, -1.0f, 3.0f), 1.0f, Color(255.0f, 0.0f, 0.0f), 500.0f, 0.2f));
+	spheres.push_back(Sphere(Vector3(2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 0.0f, 255.0f), 500.0f, 0.3f));
+	spheres.push_back(Sphere(Vector3(-2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 255.0f, 0.0f), 10, 0.4f));
+	spheres.push_back(Sphere(Vector3(0.0f, -5001.0f, 0.0f), 5000.0f, Color(255.0f, 255.0f, 0.5f), 1000.0f, 0.5f));
 
-	EnableDiffuse(true);
-	EnableSpecular(true);
-	EnableShadow(true);
+	//EnableDiffuse(true);
+	//EnableSpecular(true);
+	//EnableShadow(true);
+	//EnableReflection(true);
 }
 
 void Device::ClearBuffer()
@@ -87,7 +90,7 @@ void Device::DrawScene() const
 		for (int cx = -hw; cx < hw; cx++)
 		{
 			Vector3 v = CanvasToViewPort(cx, cy);
-			Color color = TracRay(camera.eye, v);
+			Color color = TracRay(camera.eye, v, 1.0f, INFINITE, mDepth);
 			DrawPoint(Vector2(cx + hw, cy + hh), color);
 		}
 	}
@@ -98,22 +101,31 @@ Vector3 Device::CanvasToViewPort(float x, float y) const
 	return Vector3(x * vieww, y * viewh, camera.distance);
 }
 
-Color Device::TracRay(const Vector3& origin, const Vector3& v) const
+Color Device::TracRay(const Vector3& origin, const Vector3& v, float tmin, float tmax, int depth) const
 {
 	Vector3 raydir = v - origin;
 	float closestt = INFINITE;
-	const Sphere* sphere = CloestIntersection( origin, raydir, 1.0f, INFINITE, closestt);
+	const Sphere* sphere = CloestIntersection( origin, raydir, tmin, tmax, closestt);
 
 	if (sphere == nullptr)
-		return Color(255.0f, 255.0f, 255.0f);
+		return mBackGroundColor;
 
+	float intensity = 1.0f;
 	Vector3 point = origin + raydir * closestt;
 	Vector3 normal = point - sphere->center;
-	float intensity = 1.0f;
+	normal.Normalize();
+	Vector3 view = raydir * -1;
 	if (IsDiffuseEnabled())
-		intensity = ComputeLight(point, normal, raydir*-1, sphere->specular);
+		intensity = ComputeLight(point, normal, view, sphere->specular);
 
-	return sphere->color * intensity;
+	Color localcolor = sphere->color * intensity;
+	if (IsReflectionEnabled() == false || depth <= 0 || sphere->reflection <= 0.0f)
+		return localcolor;
+
+	Vector3 reflectdir = ReflectVector(view, normal);
+	Color reflectcolor = TracRay(point, reflectdir, 0.001f, INFINITE, depth - 1);
+
+	return reflectcolor * sphere->reflection + localcolor * (1.0f - sphere->reflection);
 }
 
 Vector2 Device::Intersect(const Vector3& origin, const Vector3& dir, const Sphere& sphere) const
@@ -157,6 +169,11 @@ const Sphere* Device::CloestIntersection(const Vector3& origin, const Vector3& d
 	return cloestsphere;
 }
 
+Vector3 Device::ReflectVector(const Vector3& incident, const Vector3& normal) const
+{
+	return normal * 2 * Vector3::Dot(normal, incident) - incident;
+}
+
 float Device::ComputeLight(const Vector3& point, const Vector3& normal, const Vector3& view, float s) const
 {
 	float intensity = 0.0f;
@@ -184,7 +201,7 @@ float Device::ComputeLight(const Vector3& point, const Vector3& normal, const Ve
 			if (IsShadowEnabled())
 			{
 				float closest = INFINITE;
-				const Sphere* sphere = CloestIntersection(point, lightdir, 0.0001f, tmax, closest);
+				const Sphere* sphere = CloestIntersection(point, lightdir, 0.001f, tmax, closest);
 				if (sphere != nullptr)
 					continue;
 			}
@@ -196,7 +213,7 @@ float Device::ComputeLight(const Vector3& point, const Vector3& normal, const Ve
 			if (IsSpecularEnabled() == false || s == -1.0f)
 				continue;
 
-			Vector3 r = normal * 2 * Vector3::Dot(normal, lightdir) - lightdir;
+			Vector3 r = ReflectVector( lightdir, normal );
 			float rdotv = Vector3::Dot(r, view);
 			if (rdotv > 0.0f)
 				intensity += light.mIntensity * ::pow(rdotv / (r.Length()*view.Length()), s);
