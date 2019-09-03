@@ -15,10 +15,10 @@ int main()
 	device = new Device();
 	device->Init(400, 400);
 
-	device->EnableDiffuse(true);
-	device->EnableSpecular(true);
-	device->EnableShadow(true);
-	device->EnableReflection(true);
+	//device->EnableDiffuse(true);
+	//device->EnableSpecular(true);
+	//device->EnableShadow(true);
+	//device->EnableReflection(true);
 
 	SYSTEMTIME sys;
 	float timeold, timenew;
@@ -39,12 +39,12 @@ int main()
 			device->EnableSpecular(true);
 		}
 
-		if (device->GetDrawBoard()->IsKeyDown(VK_RIGHT))
+		if (device->GetDrawBoard()->IsKeyDown(VK_LEFT))
 		{
 			device->EnableShadow(true);
 		}
 
-		if ( device->GetDrawBoard()->IsKeyDown(VK_LEFT))
+		if ( device->GetDrawBoard()->IsKeyDown(VK_RIGHT))
 		{
 			device->EnableReflection(true);
 		}

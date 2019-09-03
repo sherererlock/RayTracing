@@ -15,7 +15,7 @@ void Device::Init(int w, int h)
 
 	mDrawMode = 0;
 
-	mDepth = 2;
+	mDepth = 3;
 
 	for (int i = 0; i < h; i++)
 		mFrameBuffer[i] = fb + i * w;
@@ -28,6 +28,11 @@ void Device::Init(int w, int h)
 	vieww = 1.0f / mWidth;
 	viewh = 1.0f / mHeight;
 
+	InitScene();
+}
+
+void Device::InitScene()
+{
 	lights.push_back(Light(Vector3(0.0f, 0.0f, 0.0f), 0.2f, Light::_Light_Ambient));
 	lights.push_back(Light(Vector3(2.0f, 1.0f, 0.0f), 0.6f, Light::_Light_Point));
 	lights.push_back(Light(Vector3(1.0f, 4.0f, 4.0f), 0.2f, Light::_Light_Directional));
@@ -129,7 +134,7 @@ Vector2 Device::Intersect(const Vector3& origin, const Vector3& dir, const Spher
 
 	float k1 = Vector3::Dot(dir, dir);
 	float k2 = 2 * Vector3::Dot(oc, dir);
-	float k3 = Vector3::Dot(oc, oc) - sphere.radius * sphere.radius;
+	float k3 = Vector3::Dot(oc, oc) - sphere.squareofradius;
 
 	float D = k2 * k2 - 4 * k1* k3;
 	if (D < 0)

@@ -17,7 +17,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			KeysDown[wparam & 511] = 1;
 			break;
 		case WM_KEYUP:
-			KeysDown[wparam & 511] = 0;
+			//KeysDown[wparam & 511] = 0;
 			break;
 		default:return DefWindowProc(hwnd, msg, wparam, lparam);
 	}

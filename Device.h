@@ -86,6 +86,7 @@ public:
 		{ mDrawMode = enable ? (mDrawMode | _Lighting_Reflection) : (mDrawMode & ~_Lighting_Reflection); }
 
 	void Init(int w, int h);
+	void InitScene();
 	void ClearBuffer();
 	void Close();
 
