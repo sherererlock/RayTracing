@@ -35,10 +35,10 @@ void Device::Init(int w, int h)
 	spheres.push_back(Sphere(Vector3(-2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 255.0f, 0.0f), 10, 0.4f));
 	spheres.push_back(Sphere(Vector3(0.0f, -5001.0f, 0.0f), 5000.0f, Color(255.0f, 255.0f, 0.5f), 1000.0f, 0.5f));
 
-	//EnableDiffuse(true);
-	//EnableSpecular(true);
-	//EnableShadow(true);
-	//EnableReflection(true);
+	EnableDiffuse(true);
+	EnableSpecular(true);
+	EnableShadow(true);
+	EnableReflection(true);
 }
 
 void Device::ClearBuffer()

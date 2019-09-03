@@ -23,15 +23,18 @@ int main()
 		{
 			device->EnableDiffuse(true);
 		}
-		else if (device->GetDrawBoard()->IsKeyDown(VK_DOWN))
+		
+		if (device->GetDrawBoard()->IsKeyDown(VK_DOWN))
 		{
 			device->EnableSpecular(true);
 		}
-		else if (device->GetDrawBoard()->IsKeyDown(VK_RIGHT))
+
+		if (device->GetDrawBoard()->IsKeyDown(VK_RIGHT))
 		{
 			device->EnableShadow(true);
 		}
-		else if ( device->GetDrawBoard()->IsKeyDown(VK_LEFT))
+
+		if ( device->GetDrawBoard()->IsKeyDown(VK_LEFT))
 		{
 			device->EnableReflection(true);
 		}

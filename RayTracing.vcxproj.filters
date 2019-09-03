@@ -19,39 +19,42 @@
     <Filter Include="windows">
       <UniqueIdentifier>{b88e5a28-6c26-4e92-81f3-553df8616189}</UniqueIdentifier>
     </Filter>
+    <Filter Include="window">
+      <UniqueIdentifier>{c6429ab8-4755-44bb-afab-dc0c81a22a19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h">
-      <Filter>math</Filter>
-    </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>math</Filter>
-    </ClInclude>
-    <ClInclude Include="Device.h">
-      <Filter>math</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawBoard.h">
-      <Filter>math</Filter>
-    </ClInclude>
-    <ClInclude Include="sphere.h">
-      <Filter>math</Filter>
-    </ClInclude>
     <ClInclude Include="Vector.h">
       <Filter>math</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Light.h">
-      <Filter>math</Filter>
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="sphere.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawBoard.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Device.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="DrawBoard.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
     <ClCompile Include="raytracing.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Device.cpp">
+      <Filter>window</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawBoard.cpp">
+      <Filter>window</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
