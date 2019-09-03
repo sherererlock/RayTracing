@@ -2,6 +2,8 @@
 #include"Device.h"
 #include"DrawBoard.h"
 
+#define EPSILON 0.001f
+
 void Device::Init(int w, int h)
 {
 	mWidth = w;
@@ -32,7 +34,7 @@ void Device::Init(int w, int h)
 
 	spheres.push_back(Sphere(Vector3(0.0f, -1.0f, 3.0f), 1.0f, Color(255.0f, 0.0f, 0.0f), 500.0f, 0.2f));
 	spheres.push_back(Sphere(Vector3(2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 0.0f, 255.0f), 500.0f, 0.3f));
-	spheres.push_back(Sphere(Vector3(-2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 255.0f, 0.0f), 10, 0.4f));
+	spheres.push_back(Sphere(Vector3(-2.0f, 0.0f, 4.0f), 1.0f, Color(0.0f, 255.0f, 0.0f), 10.0f, 0.4f));
 	spheres.push_back(Sphere(Vector3(0.0f, -5001.0f, 0.0f), 5000.0f, Color(255.0f, 255.0f, 0.5f), 1000.0f, 0.5f));
 
 	EnableDiffuse(true);
@@ -90,7 +92,7 @@ void Device::DrawScene() const
 		for (int cx = -hw; cx < hw; cx++)
 		{
 			Vector3 v = CanvasToViewPort(cx, cy);
-			Color color = TracRay(camera.eye, v, 1.0f, INFINITE, mDepth);
+			Color color = TracRay(camera.eye, v - camera.eye, 1.0f, INFINITE, mDepth);
 			DrawPoint(Vector2(cx + hw, cy + hh), color);
 		}
 	}
@@ -101,20 +103,18 @@ Vector3 Device::CanvasToViewPort(float x, float y) const
 	return Vector3(x * vieww, y * viewh, camera.distance);
 }
 
-Color Device::TracRay(const Vector3& origin, const Vector3& v, float tmin, float tmax, int depth) const
+Color Device::TracRay(const Vector3& origin, const Vector3& direction, float tmin, float tmax, int depth) const
 {
-	Vector3 raydir = v - origin;
 	float closestt = INFINITE;
-	const Sphere* sphere = CloestIntersection( origin, raydir, tmin, tmax, closestt);
+	const Sphere* sphere = CloestIntersection( origin, direction, tmin, tmax, closestt);
 
 	if (sphere == nullptr)
 		return mBackGroundColor;
 
 	float intensity = 1.0f;
-	Vector3 point = origin + raydir * closestt;
+	Vector3 point = origin + direction * closestt;
 	Vector3 normal = point - sphere->center;
-	normal.Normalize();
-	Vector3 view = raydir * -1;
+	Vector3 view = direction * -1;
 	if (IsDiffuseEnabled())
 		intensity = ComputeLight(point, normal, view, sphere->specular);
 
@@ -123,7 +123,7 @@ Color Device::TracRay(const Vector3& origin, const Vector3& v, float tmin, float
 		return localcolor;
 
 	Vector3 reflectdir = ReflectVector(view, normal);
-	Color reflectcolor = TracRay(point, reflectdir, 0.001f, INFINITE, depth - 1);
+	Color reflectcolor = TracRay(point, reflectdir, EPSILON, INFINITE, depth - 1);
 
 	return reflectcolor * sphere->reflection + localcolor * (1.0f - sphere->reflection);
 }
@@ -201,7 +201,7 @@ float Device::ComputeLight(const Vector3& point, const Vector3& normal, const Ve
 			if (IsShadowEnabled())
 			{
 				float closest = INFINITE;
-				const Sphere* sphere = CloestIntersection(point, lightdir, 0.001f, tmax, closest);
+				const Sphere* sphere = CloestIntersection(point, lightdir, EPSILON, tmax, closest);
 				if (sphere != nullptr)
 					continue;
 			}
