@@ -14,6 +14,16 @@ int main()
 {
 	device = new Device();
 	device->Init(400, 400);
+
+	device->EnableDiffuse(true);
+	device->EnableSpecular(true);
+	device->EnableShadow(true);
+	device->EnableReflection(true);
+
+	SYSTEMTIME sys;
+	float timeold, timenew;
+	GetLocalTime(&sys);
+	timeold = sys.wSecond * 1000 + sys.wMilliseconds;
 	while (true)
 	{
 		if (device->GetDrawBoard( )->IsKeyDown(VK_ESCAPE))
@@ -23,7 +33,7 @@ int main()
 		{
 			device->EnableDiffuse(true);
 		}
-		
+
 		if (device->GetDrawBoard()->IsKeyDown(VK_DOWN))
 		{
 			device->EnableSpecular(true);
@@ -41,7 +51,12 @@ int main()
 
 		device->ClearBuffer();
 		device->DrawScene();
+		GetLocalTime(&sys);
+		timenew = sys.wSecond * 1000 + sys.wMilliseconds;
+		std::cout << timenew - timeold << std::endl;
 		device->GetDrawBoard()->Update();
+		timeold = timenew;
+		Sleep(1);
 	}
 
 	device->Close();
