@@ -29,7 +29,7 @@ void DrawBoard::Init(int w, int h)
 {
 	mWidth = w;
 	mHeight = h;
-	static TCHAR szAppName[] = TEXT("SoftRendering"); //创建窗口的时候需要一个窗口类名
+	static TCHAR szAppName[] = TEXT("RayTracing"); //创建窗口的时候需要一个窗口类名
 	WNDCLASS wndclass; //创建窗口类对象
 	Close();
 
